@@ -1,5 +1,7 @@
 """Factories to transform Gnucash entities into Beancount directives.
 """
+import datetime
+
 from beancount.core import data
 from beancount.core.account_types import DEFAULT_ACCOUNT_TYPES as ACCOUNT_TYPES
 
@@ -79,7 +81,9 @@ def Commodity(commodity, date):
 
 def Price(price):
     meta = {}
-    date = price.date.date()
+    date = price.date
+    if isinstance(date, datetime.datetime):
+        date = date.date()
     currency = price.commodity.mnemonic
     amount = data.Amount(price.value, price.currency.mnemonic)
 
@@ -126,7 +130,9 @@ def Posting(split):
 
 def Transaction(txn, postings=None):
     meta = meta_from(txn, 'num notes')
-    date = txn.post_date.date()
+    date = txn.post_date
+    if isinstance(date, datetime.datetime):
+        date = date.date()
     flag = '*'
     payee = ''
     narration = txn.description

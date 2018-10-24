@@ -1,6 +1,7 @@
 """The logic that builds a Beancount entry list from Gnucash entities.
 """
 from operator import attrgetter
+import datetime
 
 from gnucash_to_beancount.directives import ACCOUNT_TYPES
 from gnucash_to_beancount.directives import Commodity
@@ -13,7 +14,9 @@ __license__ = "GNU GPLv2"
 
 
 def load_entries(book):
-    first_date = book.transactions[0].post_date.date()
+    first_date = book.transactions[0].post_date
+    if isinstance(first_date, datetime.datetime):
+        first_date = first_date.date()
 
     entries = []
 
